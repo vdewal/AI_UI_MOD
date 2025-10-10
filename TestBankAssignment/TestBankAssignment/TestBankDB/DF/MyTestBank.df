@@ -1,0 +1,691 @@
+ADD SEQUENCE "CustIdSeq"
+  INITIAL 11
+  INCREMENT 1
+  CYCLE-ON-LIMIT no
+
+ADD SEQUENCE "SavingAcctNumSeq"
+  INITIAL 456011
+  INCREMENT 1
+  CYCLE-ON-LIMIT no
+  MAX-VAL 600000
+
+ADD SEQUENCE "LoanAcctNumSeq"
+  INITIAL 234007
+  INCREMENT 1
+  CYCLE-ON-LIMIT no
+  MAX-VAL 456000
+
+ADD SEQUENCE "EMIDSeq"
+  INITIAL 1007
+  INCREMENT 1
+  CYCLE-ON-LIMIT no
+
+ADD TABLE "AccountType"
+  AREA "Schema Area"
+  DUMP-NAME "accounttype"
+
+ADD FIELD "AccountTypeId" OF "AccountType" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Account Type ID"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Account Type ID"
+  ORDER 10
+
+ADD FIELD "AccountType" OF "AccountType" AS character 
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "AccountType"
+  POSITION 3
+  MAX-WIDTH 40
+  COLUMN-LABEL "AccountType"
+  ORDER 20
+
+ADD FIELD "AccSubType" OF "AccountType" AS character 
+  FORMAT "x(32)"
+  INITIAL ""
+  LABEL "AccSubType"
+  POSITION 4
+  MAX-WIDTH 64
+  COLUMN-LABEL "AccSubType"
+  ORDER 30
+
+ADD INDEX "IDXAccTypeID" ON "AccountType" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "AccountTypeId" ASCENDING 
+
+ADD TABLE "City"
+  AREA "Schema Area"
+  DUMP-NAME "city"
+
+ADD FIELD "CityCode" OF "City" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "City Code"
+  POSITION 2
+  MAX-WIDTH 16
+  COLUMN-LABEL "City Code"
+  ORDER 10
+
+ADD FIELD "CityName" OF "City" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "City Name"
+  POSITION 3
+  MAX-WIDTH 16
+  COLUMN-LABEL "City Name"
+  ORDER 20
+
+ADD FIELD "StateCode" OF "City" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "State Code"
+  POSITION 4
+  MAX-WIDTH 16
+  COLUMN-LABEL "State Code"
+  ORDER 30
+
+ADD INDEX "idx_state-city" ON "City" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "CityCode" ASCENDING 
+  INDEX-FIELD "StateCode" ASCENDING 
+
+ADD TABLE "Country"
+  AREA "Schema Area"
+  DUMP-NAME "country"
+
+ADD FIELD "CountryCode" OF "Country" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Country Code"
+  POSITION 2
+  MAX-WIDTH 16
+  COLUMN-LABEL "Country Code"
+  ORDER 10
+
+ADD FIELD "CountryName" OF "Country" AS character 
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Country Name"
+  POSITION 3
+  MAX-WIDTH 16
+  COLUMN-LABEL "Country Name"
+  ORDER 20
+
+ADD INDEX "idx_countrycode" ON "Country" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "CountryCode" ASCENDING 
+
+ADD TABLE "CustomerAccounts"
+  AREA "Schema Area"
+  DUMP-NAME "customeraccounts"
+
+ADD FIELD "CustId" OF "CustomerAccounts" AS integer 
+  FORMAT ">,>>>,>>9"
+  INITIAL "0"
+  LABEL "Customer ID"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Customer ID"
+  ORDER 10
+
+ADD FIELD "AcctNum" OF "CustomerAccounts" AS integer 
+  FORMAT ">>,>>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Account #"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Account #"
+  ORDER 20
+
+ADD FIELD "AccountTypeID" OF "CustomerAccounts" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "AccountTypeId"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "AccountTypeId"
+  ORDER 30
+
+ADD INDEX "idx_customer_accounts" ON "CustomerAccounts" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "CustId" ASCENDING 
+  INDEX-FIELD "AccountTypeID" ASCENDING 
+  INDEX-FIELD "AcctNum" ASCENDING 
+
+ADD TABLE "CustomerDetail"
+  AREA "Schema Area"
+  DUMP-NAME "customer"
+  TABLE-TRIGGER "CREATE" NO-OVERRIDE PROCEDURE "C:\OpenEdge\WRK\TrgMyTestBank\custSeqTrg.p" CRC "?" 
+
+ADD FIELD "CustId" OF "CustomerDetail" AS integer 
+  FORMAT ">,>>>,>>9"
+  INITIAL "0"
+  LABEL "Customer ID"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Customer ID"
+  ORDER 10
+
+ADD FIELD "FirstName" OF "CustomerDetail" AS character 
+  FORMAT "x(40)"
+  INITIAL ""
+  LABEL "First Name"
+  POSITION 3
+  MAX-WIDTH 80
+  COLUMN-LABEL "First Name"
+  ORDER 20
+
+ADD FIELD "LastName" OF "CustomerDetail" AS character 
+  FORMAT "x(40)"
+  INITIAL ""
+  LABEL "Last Name"
+  POSITION 4
+  MAX-WIDTH 80
+  COLUMN-LABEL "Last Name"
+  ORDER 30
+
+ADD FIELD "Address1" OF "CustomerDetail" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Address Line 1"
+  POSITION 5
+  MAX-WIDTH 120
+  COLUMN-LABEL "Address Line 1"
+  ORDER 40
+
+ADD FIELD "Address2" OF "CustomerDetail" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Address Line 1"
+  POSITION 6
+  MAX-WIDTH 120
+  COLUMN-LABEL "Address Line 1"
+  ORDER 50
+
+ADD FIELD "City" OF "CustomerDetail" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "City"
+  POSITION 7
+  MAX-WIDTH 16
+  COLUMN-LABEL "City"
+  VALEXP "CAN-FIND(City OF CustomerDetails)"
+  VALMSG "City should be present in city table"
+  ORDER 60
+
+ADD FIELD "State" OF "CustomerDetail" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "State"
+  POSITION 8
+  MAX-WIDTH 16
+  COLUMN-LABEL "State"
+  ORDER 70
+
+ADD FIELD "Country" OF "CustomerDetail" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Country"
+  POSITION 9
+  MAX-WIDTH 16
+  COLUMN-LABEL "Country"
+  ORDER 80
+
+ADD FIELD "EmailId" OF "CustomerDetail" AS character 
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Email Address"
+  POSITION 10
+  MAX-WIDTH 100
+  COLUMN-LABEL "Email Address"
+  ORDER 90
+
+ADD FIELD "Phone" OF "CustomerDetail" AS character 
+  FORMAT "x(12)"
+  INITIAL ""
+  LABEL "Phone"
+  POSITION 11
+  MAX-WIDTH 24
+  COLUMN-LABEL "Phone"
+  ORDER 100
+
+ADD FIELD "Mobile" OF "CustomerDetail" AS character 
+  FORMAT "x(12)"
+  INITIAL ""
+  LABEL "Mobile#"
+  POSITION 12
+  MAX-WIDTH 24
+  COLUMN-LABEL "Mobile#"
+  ORDER 110
+
+ADD FIELD "DateOfBirth" OF "CustomerDetail" AS date 
+  FORMAT "99/99/99"
+  INITIAL ?
+  LABEL "Date of Birth"
+  POSITION 13
+  MAX-WIDTH 4
+  COLUMN-LABEL "Date of Birth"
+  ORDER 120
+
+ADD FIELD "MaritalStatus" OF "CustomerDetail" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Marital Status"
+  POSITION 14
+  MAX-WIDTH 16
+  COLUMN-LABEL "Marital Status"
+  ORDER 130
+
+ADD FIELD "ZIPCode" OF "CustomerDetail" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "ZIP Code"
+  POSITION 15
+  MAX-WIDTH 16
+  COLUMN-LABEL "ZIP Code"
+  ORDER 140
+
+ADD INDEX "idx_custid1" ON "CustomerDetail" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "CustId" ASCENDING 
+
+ADD INDEX "IDXEmail" ON "CustomerDetail" 
+  AREA "Schema Area"
+  INDEX-FIELD "EmailId" ASCENDING 
+
+ADD INDEX "IDXFirstName" ON "CustomerDetail" 
+  AREA "Schema Area"
+  INDEX-FIELD "FirstName" ASCENDING 
+
+ADD INDEX "IDXLastName" ON "CustomerDetail" 
+  AREA "Schema Area"
+  INDEX-FIELD "LastName" ASCENDING 
+
+ADD INDEX "IDXMobile" ON "CustomerDetail" 
+  AREA "Schema Area"
+  INDEX-FIELD "Mobile" ASCENDING 
+
+ADD TABLE "LoanAccountDetail"
+  AREA "Schema Area"
+  DUMP-NAME "loanaccountdetail"
+  TABLE-TRIGGER "CREATE" NO-OVERRIDE PROCEDURE "C:\OpenEdge\WRK\TrgMyTestBank\loanAcctSeqTrg.p" CRC "?" 
+
+ADD FIELD "AcctNum" OF "LoanAccountDetail" AS integer 
+  FORMAT ">>,>>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Loan Account #"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Loan Account #"
+  ORDER 10
+
+ADD FIELD "Balance" OF "LoanAccountDetail" AS integer 
+  FORMAT ">>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Balance"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Balance"
+  ORDER 40
+
+ADD FIELD "BranchCode" OF "LoanAccountDetail" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Branch Code"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Branch Code"
+  ORDER 60
+
+ADD FIELD "RateOfInterest" OF "LoanAccountDetail" AS decimal 
+  FORMAT ">9.99"
+  INITIAL "0"
+  LABEL "Rate of Interest"
+  POSITION 6
+  MAX-WIDTH 17
+  COLUMN-LABEL "Rate of Interest"
+  DECIMALS 2
+  ORDER 100
+
+ADD FIELD "LoanDuration" OF "LoanAccountDetail" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Loan Duration (Months)"
+  POSITION 7
+  MAX-WIDTH 4
+  COLUMN-LABEL "LoanDuration (Months)"
+  ORDER 110
+
+ADD FIELD "TotalLoanAmount" OF "LoanAccountDetail" AS integer 
+  FORMAT ">>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Total Amount"
+  POSITION 8
+  MAX-WIDTH 4
+  COLUMN-LABEL "Total Amount"
+  ORDER 120
+
+ADD FIELD "EMIID" OF "LoanAccountDetail" AS integer 
+  FORMAT ">>>9"
+  INITIAL "0"
+  LABEL "EMIID"
+  POSITION 9
+  MAX-WIDTH 4
+  COLUMN-LABEL "EMIID"
+  ORDER 130
+
+ADD FIELD "LoanAccountTypeID" OF "LoanAccountDetail" AS integer 
+  FORMAT "->,>>>,>>9"
+  INITIAL "0"
+  LABEL "LoanAccountTypeID"
+  POSITION 11
+  MAX-WIDTH 4
+  COLUMN-LABEL "LoanAccountTypeID"
+  ORDER 140
+
+ADD INDEX "idex_acctnum" ON "LoanAccountDetail" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "AcctNum" ASCENDING 
+
+ADD TABLE "LoanEMIDetail"
+  AREA "Schema Area"
+  DUMP-NAME "loanemidetail"
+
+ADD FIELD "EMIID" OF "LoanEMIDetail" AS integer 
+  FORMAT ">>>9"
+  INITIAL "0"
+  LABEL "EMIDetailID"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "EMIDetailID"
+  ORDER 130
+
+ADD FIELD "EMIDate" OF "LoanEMIDetail" AS date 
+  FORMAT "99/99/99"
+  INITIAL ?
+  LABEL "EMI Date"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "EMI Date"
+  ORDER 140
+
+ADD FIELD "EMIAmount" OF "LoanEMIDetail" AS decimal 
+  FORMAT ">>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "EMI Amount"
+  POSITION 4
+  MAX-WIDTH 17
+  COLUMN-LABEL "EMI Amount"
+  DECIMALS 2
+  ORDER 150
+
+ADD FIELD "EMIStatus" OF "LoanEMIDetail" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "EMI Status"
+  POSITION 5
+  MAX-WIDTH 16
+  COLUMN-LABEL "EMI Status"
+  ORDER 160
+
+ADD FIELD "EMIReminder" OF "LoanEMIDetail" AS integer 
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "EMIReminder"
+  POSITION 6
+  MAX-WIDTH 4
+  COLUMN-LABEL "EMIReminder"
+  ORDER 170
+
+ADD FIELD "EMINum" OF "LoanEMIDetail" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "EMI#"
+  POSITION 7
+  MAX-WIDTH 4
+  COLUMN-LABEL "EMI#"
+  ORDER 180
+
+ADD FIELD "RemainingBalance" OF "LoanEMIDetail" AS decimal 
+  FORMAT ">>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Remaining Balance"
+  POSITION 8
+  MAX-WIDTH 17
+  COLUMN-LABEL "Remaining Balance"
+  DECIMALS 2
+  ORDER 190
+
+ADD INDEX "IDXEmiNum" ON "LoanEMIDetail" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "EMINum" ASCENDING 
+
+ADD INDEX "IDXEMIID" ON "LoanEMIDetail" 
+  AREA "Schema Area"
+  INDEX-FIELD "EMIID" ASCENDING 
+
+ADD TABLE "PostalCode"
+  AREA "Schema Area"
+  DUMP-NAME "postalcode"
+
+ADD FIELD "ZIPCode" OF "PostalCode" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "ZIP Code"
+  POSITION 2
+  MAX-WIDTH 16
+  COLUMN-LABEL "ZIP Code"
+  ORDER 10
+
+ADD FIELD "CityCode" OF "PostalCode" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "City Code"
+  POSITION 3
+  MAX-WIDTH 16
+  COLUMN-LABEL "City Code"
+  ORDER 20
+
+ADD INDEX "IDXZIPCode" ON "PostalCode" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "ZIPCode" ASCENDING 
+
+ADD INDEX "IDXCityCode" ON "PostalCode" 
+  AREA "Schema Area"
+  UNIQUE
+  INDEX-FIELD "CityCode" ASCENDING 
+
+ADD TABLE "SavingAccountDetail"
+  AREA "Schema Area"
+  DUMP-NAME "accountdetail"
+  TABLE-TRIGGER "CREATE" NO-OVERRIDE PROCEDURE "C:\OpenEdge\WRK\TrgMyTestBank\SavAcctNumSeqTrg.p" CRC "?" 
+
+ADD FIELD "AcctNum" OF "SavingAccountDetail" AS integer 
+  FORMAT ">>,>>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Account #"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Account #"
+  ORDER 10
+
+ADD FIELD "SavingAccTypeID" OF "SavingAccountDetail" AS integer 
+  FORMAT "->,>>>,>>9"
+  INITIAL "0"
+  LABEL "SavingAccTypeID"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "SavingAccTypeID"
+  ORDER 30
+
+ADD FIELD "Balance" OF "SavingAccountDetail" AS integer 
+  FORMAT "->,>>>,>>9"
+  INITIAL "0"
+  LABEL "Balance"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Balance"
+  ORDER 40
+
+ADD FIELD "TransferLimit" OF "SavingAccountDetail" AS integer 
+  FORMAT ">>,>>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Transfer Limit"
+  POSITION 6
+  MAX-WIDTH 4
+  COLUMN-LABEL "Transfer Limit"
+  ORDER 50
+
+ADD FIELD "BranchCode" OF "SavingAccountDetail" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Branch Code"
+  POSITION 7
+  MAX-WIDTH 4
+  COLUMN-LABEL "Branch Code"
+  ORDER 60
+
+ADD INDEX "idx_acctnum" ON "SavingAccountDetail" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "AcctNum" ASCENDING 
+
+ADD TABLE "SavingAccountTxnHistory"
+  AREA "Schema Area"
+  DUMP-NAME "transactionhistory"
+
+ADD FIELD "AcctNum" OF "SavingAccountTxnHistory" AS integer 
+  FORMAT ">>,>>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Account #"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Account #"
+  ORDER 10
+
+ADD FIELD "TxnDate" OF "SavingAccountTxnHistory" AS date 
+  FORMAT "99/99/99"
+  INITIAL ?
+  LABEL "Txn Date"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Txn Date"
+  ORDER 20
+
+ADD FIELD "TxnID" OF "SavingAccountTxnHistory" AS integer 
+  FORMAT ">>>,>>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Transaction ID"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Transaction ID"
+  ORDER 30
+
+ADD FIELD "TxnDetail" OF "SavingAccountTxnHistory" AS character 
+  FORMAT "x(160)"
+  INITIAL ""
+  LABEL "Transaction Detail"
+  POSITION 5
+  MAX-WIDTH 160
+  COLUMN-LABEL "Transaction Detail"
+  ORDER 40
+
+ADD FIELD "WithdrawAmount" OF "SavingAccountTxnHistory" AS decimal 
+  FORMAT ">>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Withdraw Amount"
+  POSITION 6
+  MAX-WIDTH 17
+  COLUMN-LABEL "Withdraw Amount"
+  DECIMALS 2
+  ORDER 50
+
+ADD FIELD "DepositAmount" OF "SavingAccountTxnHistory" AS decimal 
+  FORMAT ">>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Deposit Amount"
+  POSITION 7
+  MAX-WIDTH 17
+  COLUMN-LABEL "Deposit Amount"
+  DECIMALS 2
+  ORDER 60
+
+ADD FIELD "Balance" OF "SavingAccountTxnHistory" AS decimal 
+  FORMAT ">>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Balance"
+  POSITION 8
+  MAX-WIDTH 17
+  COLUMN-LABEL "Balance"
+  DECIMALS 2
+  ORDER 70
+
+ADD INDEX "idx_TxnId" ON "SavingAccountTxnHistory" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "TxnID" ASCENDING 
+
+ADD INDEX "idx_acctnum-date" ON "SavingAccountTxnHistory" 
+  AREA "Schema Area"
+  INDEX-FIELD "AcctNum" ASCENDING 
+  INDEX-FIELD "TxnDate" ASCENDING 
+
+ADD TABLE "State"
+  AREA "Schema Area"
+  DUMP-NAME "state"
+
+ADD FIELD "StateCode" OF "State" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "State Code"
+  POSITION 2
+  MAX-WIDTH 16
+  COLUMN-LABEL "State Code"
+  ORDER 10
+
+ADD FIELD "StateName" OF "State" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "State Description"
+  POSITION 3
+  MAX-WIDTH 16
+  COLUMN-LABEL "State Description"
+  ORDER 20
+
+ADD FIELD "CountryCode" OF "State" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  POSITION 4
+  MAX-WIDTH 16
+  ORDER 30
+
+ADD INDEX "idex_Country_State" ON "State" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "CountryCode" ASCENDING 
+  INDEX-FIELD "StateCode" ASCENDING 
+
+.
+PSC
+cpstream=ISO8859-1
+.
+0000014704
