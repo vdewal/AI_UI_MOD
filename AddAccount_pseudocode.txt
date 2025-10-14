@@ -1,0 +1,79 @@
+AddAccount Dialog — Pseudocode
+
+procedure OpenAddAccountDialog(iCustId):
+  initialize UI:
+    hide IFSC, RateOfInt, TotalLoanAmt, TransferLimit, LoanDuration
+    set CreateButton disabled
+
+  on WindowClose:
+    treat as END-ERROR (cancel)
+
+  on AccountType.changed:
+    acctType := AccountType.value
+    if acctType == "Savings Account":
+      show IFSC, TransferLimit
+      hide LoanDuration, RateOfInt, TotalLoanAmt
+    else if acctType == "Loan Account":
+      show IFSC, LoanDuration, RateOfInt, TotalLoanAmt
+      hide TransferLimit
+
+    // fetch account subtypes from server
+    conn := new ServerConnection()
+    util := new ClientUtility()
+    conn.connect()
+    inputJson := util.getInputParameterStructure(
+                   "getAcctSubType",
+                   acctType,
+                   0,
+                   handle(ttEmpty))
+    lcAccSubTypeList := run TestBankController.p on conn with inputJson
+    conn.disconnect()
+
+    AccntSubType.setListItems(lcAccSubTypeList)
+    call validate()
+
+  // rerun validation whenever any relevant field changes
+  on AccntSubType.changed: call validate()
+  on IFSC.changed: call validate()
+  on TransferLimit.changed: call validate()
+  on LoanDuration.changed: call validate()
+  on TotalLoanAmt.changed: call validate()
+  on RateOfInt.changed: call validate()
+
+  procedure validate():
+    read current field values:
+      cAccntSubType, cAccntType, cIFSCCode,
+      iTransferLimit, dRateOfInt, iTotalLoanAmt, iLoanDuration
+
+    // enable Create if Savings fields are complete OR Loan fields are complete
+    if (cAccntSubType present AND cAccntType present AND cIFSCCode not empty AND iTransferLimit != 0)
+       OR (cAccntSubType present AND cAccntType present AND cIFSCCode not empty
+           AND dRateOfInt != 0.00 AND iTotalLoanAmt != 0 AND iLoanDuration present):
+      CreateButton.enable()
+    else:
+      CreateButton.disable()
+
+  on CreateButton.choose:
+    // collect details into temp-table
+    create ttCustAccntDetails with:
+      AccntSubType  := AccntSubType.value
+      AccntType     := AccountType.value
+      IFSCCode      := string(IFSC.value)
+      TransferLimit := int(TransferLimit.value)
+      RateOfInt     := decimal(RateOfInt.value)
+      TotalLoanAmt  := int(TotalLoanAmt.value)
+      LoanDuration  := int(LoanDuration.value)
+
+    // call server to add customer account
+    conn := new ServerConnection()
+    util := new ClientUtility()
+    conn.connect()
+    inputJson := util.getInputParameterStructure(
+                   "AddCustomerAccount",
+                   AccountType.value,
+                   iCustId,
+                   handle(ttCustAccntDetails))
+    lcStatus := run TestBankController.p on conn with inputJson
+    conn.disconnect()
+
+    show alert with lcStatus
