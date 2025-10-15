@@ -1,0 +1,160 @@
+PSEUDO CODE FOR SavingAccountDetail.w
+=====================================
+
+PURPOSE:
+This is a SmartWindow procedure that displays detailed information about savings accounts, including account details, transaction history, and provides options for deposits and withdrawals.
+
+MAIN STRUCTURE:
+1. Window Definition and Setup
+2. Data Structures (Temp Tables)
+3. UI Components (Buttons, Fields, Frames, Browse)
+4. Event Handlers
+5. Business Logic Procedures
+
+DATA STRUCTURES:
+- ttCustAccntDetails: Stores customer account information
+  - Fields: AcctNum, AccntType, AccntSubType, TransferLimit, Balance, BranchCode, RateOfInterest, LoanDuration, TotalLoanAmount
+- ttSavingAccountTxnHistory: Stores transaction history
+  - Fields: AcctNum, TxnDate, TxnId, TxnDetail, WithdrawAmount, DepositAmount, Balance
+- ttEmpty: Empty temp table with same structure as ttCustAccntDetails
+
+UI COMPONENTS:
+- Window: wWin (SmartWindow)
+- Frame: fMain
+- Buttons: 
+  - BUTTON-Deposit: Deposit money
+  - BUTTON-Withdraw: Withdraw money
+  - BUTTON-GenerateReport: Generate account report
+  - BUTTON-Close: Close window
+- Display Fields:
+  - FILL-IN-AccountNo: Account number (read-only)
+  - FILL-IN-Balance: Current balance (read-only)
+  - FILL-IN-TransferLimit: Transfer limit (read-only)
+  - FILL-IN-IFSC: IFSC code (read-only)
+  - COMBO-BOX-AccType: Account type (read-only)
+- Filter Controls:
+  - RADIO-SET-TxnType: Transaction type filter (All, Deposit, Withdraw)
+- Browse Widget:
+  - BROWSE-SavingAccountTxnHistory: Displays transaction history
+
+MAIN PROCEDURES:
+
+1. initializeObject():
+   - Initialize UI components
+   - Load account data
+   - Load transaction history
+   - Display account information
+   - Configure browse widget
+
+2. BUTTON-Deposit (ON CHOOSE):
+   - Open deposit dialog
+   - Pass account details
+   - Handle deposit result
+   - Refresh transaction history
+
+3. BUTTON-Withdraw (ON CHOOSE):
+   - Open withdrawal dialog
+   - Pass account details
+   - Handle withdrawal result
+   - Refresh transaction history
+
+4. BUTTON-GenerateReport (ON CHOOSE):
+   - Open report dialog
+   - Pass account details
+   - Generate account report
+
+5. BUTTON-Close (ON CHOOSE):
+   - Close account detail window
+   - Return to calling procedure
+
+6. RADIO-SET-TxnType (ON VALUE-CHANGED):
+   - Filter transaction history
+   - Update browse display
+   - Show/hide relevant columns
+
+7. loadAccountData():
+   - Connect to server
+   - Retrieve account information
+   - Populate form fields
+   - Handle data loading errors
+
+8. loadTransactionHistory():
+   - Connect to server
+   - Retrieve transaction history
+   - Populate browse widget
+   - Handle data loading errors
+
+9. displayAccountInfo():
+   - Populate all display fields
+   - Format data for display
+   - Set field properties
+   - Handle missing data
+
+10. displayTransactionHistory():
+    - Clear existing browse data
+    - Populate browse with transaction history
+    - Format data for display
+    - Set browse properties
+
+11. filterTransactions():
+    - Apply transaction type filter
+    - Update browse display
+    - Show/hide columns based on filter
+
+12. refreshData():
+    - Reload account data
+    - Reload transaction history
+    - Update display
+
+13. enable_UI():
+    - Display and enable all UI components
+    - Set initial field values
+    - Configure browse widget
+
+14. disable_UI():
+    - Clean up UI components
+    - Delete window
+
+BUSINESS LOGIC:
+- Account display:
+  1. Load account data from server
+  2. Display account information in read-only fields
+  3. Load transaction history
+  4. Display transaction history in browse widget
+  5. Provide options for deposits, withdrawals, and reporting
+
+- Transaction management:
+  - Display transaction history
+  - Filter transactions by type
+  - Handle deposits and withdrawals
+  - Update account balance
+
+- Data handling:
+  - Read-only display mode
+  - Data formatting for display
+  - Error handling for missing data
+  - Data refresh capabilities
+
+ERROR HANDLING:
+- Try-catch blocks for server communication
+- Data loading error handling
+- Transaction processing errors
+- Connection error handling
+- Data validation errors
+
+INTEGRATION:
+- Uses ServerConnection class for server communication
+- Uses ClientUtility class for data formatting
+- Communicates with TestBankController.p on server
+- Integrates with deposit and withdrawal procedures
+- Integrates with reporting procedures
+- JSON data exchange format
+
+SPECIAL FEATURES:
+- Read-only display mode
+- Transaction history display
+- Transaction filtering
+- Deposit and withdrawal options
+- Report generation
+- Data refresh capabilities
+- Integration with transaction and reporting systems

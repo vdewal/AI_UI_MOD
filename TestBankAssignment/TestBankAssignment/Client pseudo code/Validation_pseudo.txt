@@ -1,0 +1,121 @@
+PSEUDO CODE FOR Validation.cls
+=====================================
+
+PURPOSE:
+This is a utility class that provides data validation methods for the banking system, including email validation, name validation, and phone number validation.
+
+MAIN STRUCTURE:
+1. Class Definition
+2. Constructor
+3. Public Methods
+4. Destructor
+5. Error Handling
+
+CLASS PROPERTIES:
+- No public properties defined
+- Uses local variables for validation processing
+
+MAIN METHODS:
+
+1. CONSTRUCTOR Validation():
+   - Initialize the validation class
+   - Call parent constructor
+   - Set up any required initialization
+
+2. emailValidation(INPUT cEmail):
+   - PURPOSE: Validates email address format
+   - INPUT PARAMETERS:
+     - cEmail: Email address to validate
+   - RETURN TYPE: LOGICAL
+   - LOGIC:
+     1. Check if email is empty (return TRUE if empty)
+     2. Get email length
+     3. Find @ symbol position
+     4. Split email into left and right parts
+     5. Find dot position in right part
+     6. Validate email length (minimum 5 characters)
+     7. Check for @ and dot presence
+     8. Validate left part characters (letters, numbers, dots, hyphens, underscores)
+     9. Validate right part characters (letters, numbers, dots, hyphens)
+     10. Return validation result
+   - ERROR HANDLING:
+     - Try-catch block for validation errors
+     - Return FALSE on error
+
+3. nameValidation(INPUT cName):
+   - PURPOSE: Validates name format (letters only)
+   - INPUT PARAMETERS:
+     - cName: Name to validate
+   - RETURN TYPE: LOGICAL
+   - LOGIC:
+     1. Check if name is empty (return TRUE if empty)
+     2. Iterate through each character in name
+     3. Get ASCII value of each character
+     4. Check if character is letter (A-Z or a-z)
+     5. Return validation result
+   - ERROR HANDLING:
+     - Try-catch block for validation errors
+     - Return FALSE on error
+
+4. phoneNumValidation(INPUT cNumber):
+   - PURPOSE: Validates phone number format (10 digits)
+   - INPUT PARAMETERS:
+     - cNumber: Phone number to validate
+   - RETURN TYPE: LOGICAL
+   - LOGIC:
+     1. Check if number is empty (return TRUE if empty)
+     2. Check if number length is exactly 10 digits
+     3. Iterate through each character in number
+     4. Get ASCII value of each character
+     5. Check if character is digit (0-9)
+     6. Return validation result
+   - ERROR HANDLING:
+     - Try-catch block for validation errors
+     - Return FALSE on error
+
+5. DESTRUCTOR Validation():
+   - PURPOSE: Clean up resources when object is destroyed
+   - LOGIC:
+     1. Clean up any remaining resources
+     2. Reset class state
+
+VALIDATION RULES:
+
+Email Validation:
+- Must contain @ symbol
+- Must contain dot after @
+- Left part: letters, numbers, dots, hyphens, underscores
+- Right part: letters, numbers, dots, hyphens
+- Minimum length: 5 characters
+- Empty email is considered valid
+
+Name Validation:
+- Must contain only letters (A-Z, a-z)
+- Empty name is considered valid
+- No numbers or special characters allowed
+
+Phone Number Validation:
+- Must be exactly 10 digits
+- Must contain only numbers (0-9)
+- Empty number is considered valid
+
+ERROR HANDLING:
+- Try-catch blocks in all methods
+- Proper error logging
+- Graceful error recovery
+- Resource cleanup in finally blocks
+- Validation error reporting
+
+INTEGRATION:
+- Used by all client-side procedures
+- Provides data validation for forms
+- Supports input validation
+- Enables data quality control
+- Reusable validation methods
+
+SPECIAL FEATURES:
+- Comprehensive validation rules
+- Error handling and logging
+- Resource management
+- Reusable validation methods
+- Support for empty values

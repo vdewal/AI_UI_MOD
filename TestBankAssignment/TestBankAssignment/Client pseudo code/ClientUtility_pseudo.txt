@@ -1,0 +1,150 @@
+PSEUDO CODE FOR ClientUtility.cls
+=====================================
+
+PURPOSE:
+This is a utility class that provides common functionality for client-side operations in the banking system, including data formatting, validation, and server communication preparation.
+
+MAIN STRUCTURE:
+1. Class Definition
+2. Constructor
+3. Public Methods
+4. Private Helper Methods
+5. Error Handling
+
+CLASS PROPERTIES:
+- No public properties defined
+- Uses local variables for data processing
+
+MAIN METHODS:
+
+1. CONSTRUCTOR ClientUtility():
+   - Initialize the utility class
+   - Call parent constructor
+   - Set up any required initialization
+
+2. getInputParameterStructure(INPUT cMethodName, INPUT cWhereClause, INPUT iCustId, INPUT hTempTable, OUTPUT oInputJson):
+   - PURPOSE: Creates JSON input structure for server communication
+   - INPUT PARAMETERS:
+     - cMethodName: Name of the server method to call
+     - cWhereClause: SQL WHERE clause for data filtering
+     - iCustId: Customer ID for the operation
+     - hTempTable: Handle to temp table containing data
+   - OUTPUT PARAMETERS:
+     - oInputJson: JSON object containing formatted input data
+   - LOGIC:
+     1. Create new JsonObject
+     2. Add method name to JSON
+     3. Add where clause to JSON
+     4. Add customer ID to JSON
+     5. Convert temp table to JSON array
+     6. Add temp table data to JSON
+     7. Return formatted JSON object
+
+3. formatDate(INPUT dDate, OUTPUT cFormattedDate):
+   - PURPOSE: Formats date for display or transmission
+   - INPUT PARAMETERS:
+     - dDate: Date to format
+   - OUTPUT PARAMETERS:
+     - cFormattedDate: Formatted date string
+   - LOGIC:
+     1. Check if date is valid
+     2. Format date according to system requirements
+     3. Return formatted string
+
+4. formatCurrency(INPUT dAmount, OUTPUT cFormattedAmount):
+   - PURPOSE: Formats currency amounts for display
+   - INPUT PARAMETERS:
+     - dAmount: Amount to format
+   - OUTPUT PARAMETERS:
+     - cFormattedAmount: Formatted currency string
+   - LOGIC:
+     1. Check if amount is valid
+     2. Format with appropriate currency symbols
+     3. Handle decimal places
+     4. Return formatted string
+
+5. validateInputData(INPUT hTempTable, OUTPUT lIsValid, OUTPUT cErrorMessage):
+   - PURPOSE: Validates data in temp table before sending to server
+   - INPUT PARAMETERS:
+     - hTempTable: Handle to temp table to validate
+   - OUTPUT PARAMETERS:
+     - lIsValid: Logical indicating if data is valid
+     - cErrorMessage: Error message if validation fails
+   - LOGIC:
+     1. Iterate through temp table records
+     2. Check required fields
+     3. Validate data formats
+     4. Check business rules
+     5. Set validation result and error message
+
+6. convertTempTableToJson(INPUT hTempTable, OUTPUT oJsonArray):
+   - PURPOSE: Converts temp table data to JSON array
+   - INPUT PARAMETERS:
+     - hTempTable: Handle to temp table
+   - OUTPUT PARAMETERS:
+     - oJsonArray: JSON array containing temp table data
+   - LOGIC:
+     1. Create new JsonArray
+     2. Iterate through temp table records
+     3. Convert each record to JSON object
+     4. Add JSON object to array
+     5. Return JSON array
+
+7. convertJsonToTempTable(INPUT oJsonArray, INPUT hTempTable):
+   - PURPOSE: Converts JSON array to temp table data
+   - INPUT PARAMETERS:
+     - oJsonArray: JSON array containing data
+     - hTempTable: Handle to temp table to populate
+   - LOGIC:
+     1. Clear temp table
+     2. Iterate through JSON array
+     3. Create temp table record for each JSON object
+     4. Populate record fields from JSON data
+
+8. generateUniqueId(OUTPUT cUniqueId):
+   - PURPOSE: Generates unique identifier for transactions
+   - OUTPUT PARAMETERS:
+     - cUniqueId: Generated unique ID
+   - LOGIC:
+     1. Get current timestamp
+     2. Generate random component
+     3. Combine to create unique ID
+     4. Return unique ID
+
+9. logError(INPUT cErrorMessage, INPUT cMethodName):
+   - PURPOSE: Logs error messages for debugging
+   - INPUT PARAMETERS:
+     - cErrorMessage: Error message to log
+     - cMethodName: Method where error occurred
+   - LOGIC:
+     1. Format error message with timestamp
+     2. Add method name to error
+     3. Write to log file or display
+     4. Handle logging errors
+
+10. cleanupResources():
+    - PURPOSE: Cleans up resources used by utility class
+    - LOGIC:
+      1. Close any open handles
+      2. Clear temporary data
+      3. Reset class state
+
+ERROR HANDLING:
+- Try-catch blocks in all methods
+- Proper error logging
+- Graceful error recovery
+- Resource cleanup in finally blocks
+
+INTEGRATION:
+- Used by all client-side procedures
+- Integrates with JSON object model
+- Works with temp tables
+- Supports server communication
+- Provides common validation functions
+
+SPECIAL FEATURES:
+- Generic data conversion methods
+- Comprehensive validation
+- Error logging and reporting
+- Resource management
+- Reusable utility functions

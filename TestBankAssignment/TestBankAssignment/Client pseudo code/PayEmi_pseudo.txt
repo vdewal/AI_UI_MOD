@@ -1,0 +1,138 @@
+PSEUDO CODE FOR PayEmi.w
+=====================================
+
+PURPOSE:
+This is a SmartDialog procedure that handles EMI (Equated Monthly Installment) payments for loan accounts, processing the payment and updating the loan balance.
+
+MAIN STRUCTURE:
+1. Dialog Definition and Setup
+2. Data Structures (Temp Tables)
+3. UI Components (Buttons, Fields, Frames)
+4. Event Handlers
+5. Business Logic Procedures
+
+DATA STRUCTURES:
+- ttLoanEMIDetail: Stores EMI payment details
+  - Fields: EmiId, AcctNum, EmiAmount, EmiDate, EmiStatus, PrincipalAmount, InterestAmount, RemainingBalance
+- ttEmpty: Empty temp table with same structure as ttLoanEMIDetail
+
+UI COMPONENTS:
+- Dialog: gDialog (SmartDialog)
+- Frame: gDialog
+- Buttons: 
+  - Btn_PayEMI: Process EMI payment
+  - Btn_Cancel: Cancel EMI payment
+- Input Fields:
+  - FILL-IN-AcctNum: Account number (read-only)
+  - FILL-IN-EMIAmount: EMI amount (read-only)
+  - FILL-IN-EMIDate: EMI date (read-only)
+  - FILL-IN-PaymentAmount: Payment amount
+  - COMBO-BOX-PaymentMode: Payment mode (CASH, ATM, UPI, CHEQUE)
+  - FILL-IN-PaymentDate: Payment date
+
+MAIN PROCEDURES:
+
+1. initializeObject():
+   - Initialize UI components
+   - Load EMI details
+   - Set default values
+   - Configure form fields
+   - Set up validation
+
+2. Btn_PayEMI (ON CHOOSE):
+   - Validate payment data
+   - Process EMI payment
+   - Connect to server
+   - Send payment request to server
+   - Handle server response
+   - Close dialog on success
+
+3. Btn_Cancel (ON CHOOSE):
+   - Cancel EMI payment
+   - Close dialog without saving
+
+4. FILL-IN-PaymentAmount (ON VALUE-CHANGED):
+   - Validate payment amount
+   - Check against EMI amount
+   - Update form state
+   - Enable/disable PayEMI button
+
+5. COMBO-BOX-PaymentMode (ON VALUE-CHANGED):
+   - Validate payment mode selection
+   - Update form state
+   - Enable/disable PayEMI button
+
+6. validation():
+   - Validate all form data
+   - Check required fields are filled
+   - Validate payment amount
+   - Validate payment mode
+   - Enable/disable PayEMI button based on validation
+
+7. processEMIPayment():
+   - Create EMI payment record
+   - Set payment details
+   - Send to server for processing
+   - Handle server response
+   - Update loan balance
+
+8. calculateEMI():
+   - Calculate EMI amount
+   - Calculate principal and interest components
+   - Update EMI fields
+
+9. enable_UI():
+   - Display and enable all UI components
+   - Set initial field values
+   - Configure form properties
+
+10. disable_UI():
+    - Clean up UI components
+    - Hide dialog
+
+BUSINESS LOGIC:
+- EMI payment process:
+  1. Load EMI details for the loan
+  2. User enters payment amount and mode
+  3. System validates payment data
+  4. Payment record created
+  5. Data sent to server for processing
+  6. Loan balance updated
+  7. EMI status updated
+  8. Success message displayed
+  9. Dialog closed
+
+- Payment validation:
+  - Payment amount must be valid
+  - Payment mode must be selected
+  - Payment date must be valid
+  - Account number must be valid
+
+- EMI calculation:
+  - Calculate EMI amount based on loan details
+  - Calculate principal and interest components
+  - Update remaining balance
+  - Track payment status
+
+ERROR HANDLING:
+- Try-catch blocks for server communication
+- Payment validation errors
+- EMI calculation errors
+- Connection error handling
+- Payment processing errors
+
+INTEGRATION:
+- Uses ServerConnection class for server communication
+- Uses ClientUtility class for data formatting
+- Communicates with TestBankController.p on server
+- Updates loan balance
+- Records EMI payment
+- JSON data exchange format
+
+SPECIAL FEATURES:
+- Real-time validation
+- EMI calculation
+- Payment mode selection
+- Payment amount validation
+- Loan balance updating
+- EMI status tracking

@@ -1,0 +1,138 @@
+PSEUDO CODE FOR AddorUpdCust.w
+=====================================
+
+PURPOSE:
+This is a SmartWindow procedure for adding new customers or updating existing customer information in the banking system.
+
+MAIN STRUCTURE:
+1. Window Definition and Setup
+2. Data Structures (Temp Tables)
+3. UI Components (Buttons, Fields, Frames)
+4. Event Handlers
+5. Business Logic Procedures
+
+DATA STRUCTURES:
+- ttCustomer: Stores customer information
+  - Fields: CustId, FirstName, LastName, Email, Phone, Address, City, State, Country, PostalCode, DateOfBirth, Gender, Occupation, AnnualIncome
+- ttEmpty: Empty temp table with same structure as ttCustomer
+
+UI COMPONENTS:
+- Window: wWin (SmartWindow)
+- Frame: fMain
+- Buttons: 
+  - BUTTON-Save: Saves customer data
+  - BUTTON-Cancel: Cancels operation
+  - BUTTON-Reset: Resets form
+- Input Fields:
+  - FILL-IN-FirstName: Customer first name
+  - FILL-IN-LastName: Customer last name
+  - FILL-IN-Email: Customer email address
+  - FILL-IN-Phone: Customer phone number
+  - FILL-IN-Address: Customer address
+  - COMBO-BOX-City: City selection
+  - COMBO-BOX-State: State selection
+  - COMBO-BOX-Country: Country selection
+  - FILL-IN-PostalCode: Postal/ZIP code
+  - FILL-IN-DateOfBirth: Date of birth
+  - RADIO-SET-Gender: Gender selection (Male/Female)
+  - FILL-IN-Occupation: Customer occupation
+  - FILL-IN-AnnualIncome: Annual income
+
+MAIN PROCEDURES:
+
+1. initializeObject():
+   - Initialize UI components
+   - Set default values
+   - Load city, state, country lists from server
+   - Set current date as default for date fields
+   - Configure field properties
+
+2. BUTTON-Save (ON CHOOSE):
+   - Validate all input data
+   - Create temp table record with form data
+   - Connect to server
+   - Send data to server for customer creation/update
+   - Handle response and show status
+   - Close dialog on success
+
+3. BUTTON-Reset (ON CHOOSE):
+   - Clear all form fields
+   - Reset to default values
+   - Reload dropdown lists
+
+4. FILL-IN-FirstName (ON VALUE-CHANGED):
+   - Validate name format
+   - Update form state
+
+5. FILL-IN-Email (ON VALUE-CHANGED):
+   - Validate email format
+   - Check for duplicate email
+   - Update form state
+
+6. FILL-IN-Phone (ON VALUE-CHANGED):
+   - Validate phone number format
+   - Check for duplicate phone
+   - Update form state
+
+7. COMBO-BOX-City (ON VALUE-CHANGED):
+   - Update postal code based on city
+   - Validate address completeness
+
+8. validation():
+   - Validate all form data
+   - Check required fields are filled
+   - Validate data formats
+   - Enable/disable Save button based on validation
+
+9. enable_UI():
+   - Display and enable all UI components
+   - Set initial field values
+   - Load dropdown data
+
+10. disable_UI():
+    - Clean up UI components
+    - Delete window
+
+BUSINESS LOGIC:
+- Customer creation/update process:
+  1. User fills customer information
+  2. System validates data format and completeness
+  3. System checks for duplicate email/phone
+  4. Data sent to server for processing
+  5. Success/error message displayed
+  6. Dialog closed on success
+
+- Validation rules:
+  - First name and last name are required
+  - Email must be valid format and unique
+  - Phone must be 10 digits and unique
+  - Address, city, state, country are required
+  - Date of birth must be valid date
+  - Gender selection is required
+  - Annual income must be positive number
+
+- Data loading:
+  - City list loaded from server based on selected state
+  - State list loaded from server based on selected country
+  - Country list loaded from server
+
+ERROR HANDLING:
+- Try-catch blocks for server communication
+- Validation error messages
+- Duplicate data error handling
+- Connection error handling
+- Data format validation
+
+INTEGRATION:
+- Uses ServerConnection class for server communication
+- Uses ClientUtility class for data formatting
+- Uses Validation class for data validation
+- Communicates with TestBankController.p on server
+- JSON data exchange format
+
+SPECIAL FEATURES:
+- Dynamic dropdown loading based on selections
+- Real-time validation
+- Duplicate checking
+- Form reset functionality
+- Comprehensive data validation

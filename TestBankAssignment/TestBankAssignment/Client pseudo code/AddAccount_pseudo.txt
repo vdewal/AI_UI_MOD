@@ -1,0 +1,104 @@
+PSEUDO CODE FOR AddAccount.w
+=====================================
+
+PURPOSE:
+This is a SmartWindow procedure for adding new bank accounts to the system.
+
+MAIN STRUCTURE:
+1. Window Definition and Setup
+2. Data Structures (Temp Tables)
+3. UI Components (Buttons, Fields, Frames)
+4. Event Handlers
+5. Business Logic Procedures
+
+DATA STRUCTURES:
+- ttCustAccntDetails: Stores customer account information
+  - Fields: AcctNum, AccntType, AccntSubType, TransferLimit, Balance, BranchCode, RateOfInterest, LoanDuration, TotalLoanAmount
+- ttEmpty: Empty temp table with same structure as ttCustAccntDetails
+
+UI COMPONENTS:
+- Window: wWin (SmartWindow)
+- Frame: fMain
+- Buttons: 
+  - BUTTON-Create: Creates new account
+  - BUTTON-Cancel: Cancels operation
+- Input Fields:
+  - FILL-IN-AcctNum: Account number
+  - COMBO-BOX-AccntType: Account type (Savings, Loan, Demat)
+  - COMBO-BOX-AccntSubType: Account sub-type
+  - FILL-IN-TransferLimit: Transfer limit amount
+  - FILL-IN-IFSC: IFSC code
+  - FILL-IN-RateOfInt: Rate of interest
+  - FILL-IN-TotalLoanAmt: Total loan amount
+  - COMBO-BOX-LoanDuration: Loan duration in years
+
+MAIN PROCEDURES:
+
+1. initializeObject():
+   - Initialize UI components
+   - Set default values
+   - Configure field visibility based on account type
+   - Load account sub-types from server
+
+2. BUTTON-Create (ON CHOOSE):
+   - Validate input data
+   - Create temp table record with form data
+   - Connect to server
+   - Send data to server for account creation
+   - Handle response and show status
+   - Close dialog on success
+
+3. COMBO-BOX-AccntType (ON VALUE-CHANGED):
+   - Show/hide relevant fields based on account type
+   - Load appropriate sub-types from server
+   - Reset form fields
+
+4. COMBO-BOX-AccntSubType (ON VALUE-CHANGED):
+   - Update form based on selected sub-type
+   - Set default values for specific account types
+
+5. validation():
+   - Validate form data
+   - Enable/disable Create button based on validation
+   - Check required fields are filled
+
+6. enable_UI():
+   - Display and enable all UI components
+   - Set initial field values
+
+7. disable_UI():
+   - Clean up UI components
+   - Delete window
+
+BUSINESS LOGIC:
+- Account creation process:
+  1. User selects account type
+  2. System loads appropriate sub-types
+  3. User fills required fields
+  4. System validates data
+  5. Data sent to server for processing
+  6. Success/error message displayed
+  7. Dialog closed on success
+
+- Field visibility rules:
+  - Savings Account: Show IFSC, Transfer Limit
+  - Loan Account: Show IFSC, Rate of Interest, Total Loan Amount, Loan Duration
+  - Demat Account: Show IFSC, Transfer Limit
+
+- Validation rules:
+  - All required fields must be filled
+  - Account number must be unique
+  - Numeric fields must contain valid numbers
+  - Date fields must be valid dates
+
+ERROR HANDLING:
+- Try-catch blocks for server communication
+- Validation error messages
+- Connection error handling
+- Data format validation
+
+INTEGRATION:
+- Uses ServerConnection class for server communication
+- Uses ClientUtility class for data formatting
+- Communicates with TestBankController.p on server
+- JSON data exchange format

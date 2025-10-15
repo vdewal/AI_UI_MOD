@@ -1,0 +1,142 @@
+PSEUDO CODE FOR UpdateAccount.w
+=====================================
+
+PURPOSE:
+This is a SmartDialog procedure that allows users to update existing bank account information, handling both savings and loan account updates with appropriate field validation.
+
+MAIN STRUCTURE:
+1. Dialog Definition and Setup
+2. Data Structures (Temp Tables)
+3. UI Components (Buttons, Fields, Frames)
+4. Event Handlers
+5. Business Logic Procedures
+
+DATA STRUCTURES:
+- ttCustAccntDetails: Stores customer account information for updates
+  - Fields: AcctNum, AccntType, AccntSubType, TransferLimit, Balance, BranchCode, RateOfInterest, LoanDuration, TotalLoanAmount
+- ttEmpty: Empty temp table with same structure as ttCustAccntDetails
+
+UI COMPONENTS:
+- Dialog: gDialog (SmartDialog)
+- Frame: gDialog
+- Buttons: 
+  - Btn_Update: Update account information
+  - Btn_Cancel: Cancel update operation
+- Input Fields:
+  - FILL-IN-AcctNum: Account number (read-only)
+  - COMBO-BOX-AccntType: Account type (Savings, Loan, Demat)
+  - COMBO-BOX-AccntSubType: Account sub-type
+  - FILL-IN-TransferLimit: Transfer limit amount
+  - FILL-IN-IFSC: IFSC code
+  - FILL-IN-RateOfInt: Rate of interest
+  - FILL-IN-TotalLoanAmt: Total loan amount
+  - COMBO-BOX-LoanDuration: Loan duration in years
+
+MAIN PROCEDURES:
+
+1. initializeObject():
+   - Initialize UI components
+   - Load account data for editing
+   - Set default values
+   - Configure field visibility based on account type
+   - Load account sub-types from server
+   - Set up validation
+
+2. Btn_Update (ON CHOOSE):
+   - Validate input data
+   - Create temp table record with form data
+   - Connect to server
+   - Send update request to server
+   - Handle server response
+   - Close dialog on success
+
+3. Btn_Cancel (ON CHOOSE):
+   - Cancel update operation
+   - Close dialog without saving
+
+4. COMBO-BOX-AccntType (ON VALUE-CHANGED):
+   - Show/hide relevant fields based on account type
+   - Load appropriate sub-types from server
+   - Reset form fields
+   - Update validation
+
+5. COMBO-BOX-AccntSubType (ON VALUE-CHANGED):
+   - Update form based on selected sub-type
+   - Set default values for specific account types
+   - Update validation
+
+6. validation():
+   - Validate all form data
+   - Check required fields are filled
+   - Validate data formats
+   - Enable/disable Update button based on validation
+
+7. loadAccountData():
+   - Connect to server
+   - Retrieve account information
+   - Populate form fields
+   - Handle data loading errors
+
+8. displayAccountInfo():
+   - Populate all display fields
+   - Format data for display
+   - Set field properties
+   - Handle missing data
+
+9. updateAccount():
+   - Create temp table record
+   - Set account details
+   - Send to server for processing
+   - Handle server response
+   - Update account information
+
+10. enable_UI():
+    - Display and enable all UI components
+    - Set initial field values
+    - Configure form properties
+
+11. disable_UI():
+    - Clean up UI components
+    - Hide dialog
+
+BUSINESS LOGIC:
+- Account update process:
+  1. Load existing account data
+  2. User modifies account information
+  3. System validates updated data
+  4. Data sent to server for processing
+  5. Account information updated
+  6. Success message displayed
+  7. Dialog closed
+
+- Field visibility rules:
+  - Savings Account: Show IFSC, Transfer Limit
+  - Loan Account: Show IFSC, Rate of Interest, Total Loan Amount, Loan Duration
+  - Demat Account: Show IFSC, Transfer Limit
+
+- Validation rules:
+  - All required fields must be filled
+  - Numeric fields must contain valid numbers
+  - Date fields must be valid dates
+  - Account type must be valid
+
+ERROR HANDLING:
+- Try-catch blocks for server communication
+- Validation error messages
+- Connection error handling
+- Data format validation
+- Update processing errors
+
+INTEGRATION:
+- Uses ServerConnection class for server communication
+- Uses ClientUtility class for data formatting
+- Communicates with TestBankController.p on server
+- Updates account information
+- JSON data exchange format
+
+SPECIAL FEATURES:
+- Dynamic field visibility
+- Account type-specific validation
+- Real-time validation
+- Data loading and display
+- Update confirmation

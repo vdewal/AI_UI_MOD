@@ -1,0 +1,156 @@
+PSEUDO CODE FOR ReportDialog.w
+=====================================
+
+PURPOSE:
+This is a SmartDialog procedure that generates and displays various types of reports for bank accounts, including transaction reports, account statements, and financial summaries.
+
+MAIN STRUCTURE:
+1. Dialog Definition and Setup
+2. Data Structures (Temp Tables)
+3. UI Components (Buttons, Fields, Frames, Browse)
+4. Event Handlers
+5. Business Logic Procedures
+
+DATA STRUCTURES:
+- ttSavingAccountTxnHistory: Stores transaction history for reports
+  - Fields: AcctNum, TxnDate, TxnId, TxnDetail, WithdrawAmount, DepositAmount, Balance
+- ttEmpty: Empty temp table with same structure as ttSavingAccountTxnHistory
+
+UI COMPONENTS:
+- Dialog: gDialog (SmartDialog)
+- Frame: gDialog
+- Buttons: 
+  - Btn_Generate: Generate report
+  - Btn_Print: Print report
+  - Btn_Export: Export report
+  - Btn_Cancel: Cancel report generation
+- Input Fields:
+  - FILL-IN-AcctNum: Account number (read-only)
+  - FILL-IN-FromDate: From date
+  - FILL-IN-ToDate: To date
+  - COMBO-BOX-ReportType: Report type (Transaction, Statement, Summary)
+  - RADIO-SET-TxnType: Transaction type filter (All, Deposit, Withdraw)
+- Browse Widget:
+  - BROWSE-ReportData: Displays report data
+
+MAIN PROCEDURES:
+
+1. initializeObject():
+   - Initialize UI components
+   - Set default values
+   - Set account number
+   - Set date range
+   - Configure form fields
+   - Set up validation
+
+2. Btn_Generate (ON CHOOSE):
+   - Validate report parameters
+   - Generate report data
+   - Connect to server
+   - Send report request to server
+   - Handle server response
+   - Display report data
+
+3. Btn_Print (ON CHOOSE):
+   - Print report data
+   - Format data for printing
+   - Send to printer
+
+4. Btn_Export (ON CHOOSE):
+   - Export report data
+   - Choose export format
+   - Save to file
+
+5. Btn_Cancel (ON CHOOSE):
+   - Cancel report generation
+   - Close dialog
+
+6. FILL-IN-FromDate (ON VALUE-CHANGED):
+   - Validate from date
+   - Update form state
+   - Enable/disable Generate button
+
+7. FILL-IN-ToDate (ON VALUE-CHANGED):
+   - Validate to date
+   - Update form state
+   - Enable/disable Generate button
+
+8. COMBO-BOX-ReportType (ON VALUE-CHANGED):
+   - Update report type
+   - Update form fields
+   - Enable/disable Generate button
+
+9. RADIO-SET-TxnType (ON VALUE-CHANGED):
+   - Update transaction type filter
+   - Update form state
+   - Enable/disable Generate button
+
+10. validation():
+    - Validate all form data
+    - Check required fields are filled
+    - Validate date range
+    - Validate report type
+    - Enable/disable Generate button based on validation
+
+11. generateReport():
+    - Build report query
+    - Connect to server
+    - Send report request
+    - Handle server response
+    - Display report data
+
+12. displayReportData():
+    - Clear existing browse data
+    - Populate browse with report data
+    - Format data for display
+    - Set browse properties
+
+13. enable_UI():
+    - Display and enable all UI components
+    - Set initial field values
+    - Configure form properties
+
+14. disable_UI():
+    - Clean up UI components
+    - Hide dialog
+
+BUSINESS LOGIC:
+- Report generation process:
+  1. User selects report type and parameters
+  2. System validates report parameters
+  3. Report request sent to server
+  4. Report data retrieved from server
+  5. Data displayed in browse widget
+  6. User can print or export report
+
+- Report types:
+  - Transaction Report: Shows all transactions
+  - Account Statement: Shows account summary
+  - Financial Summary: Shows financial overview
+
+- Data filtering:
+  - Date range filtering
+  - Transaction type filtering
+  - Account-specific filtering
+
+ERROR HANDLING:
+- Try-catch blocks for server communication
+- Report validation errors
+- Date validation errors
+- Connection error handling
+- Data loading errors
+
+INTEGRATION:
+- Uses ServerConnection class for server communication
+- Uses ClientUtility class for data formatting
+- Communicates with TestBankController.p on server
+- Integrates with reporting procedures
+- JSON data exchange format
+
+SPECIAL FEATURES:
+- Multiple report types
+- Date range filtering
+- Transaction type filtering
+- Print functionality
+- Export functionality
+- Data formatting

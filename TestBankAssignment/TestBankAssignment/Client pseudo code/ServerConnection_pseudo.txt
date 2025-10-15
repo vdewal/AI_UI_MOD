@@ -1,0 +1,87 @@
+PSEUDO CODE FOR ServerConnection.cls
+=====================================
+
+PURPOSE:
+This is a utility class that manages the connection to the application server, providing methods to establish, maintain, and close connections for client-server communication in the banking system.
+
+MAIN STRUCTURE:
+1. Class Definition
+2. Properties
+3. Constructor
+4. Public Methods
+5. Destructor
+6. Error Handling
+
+CLASS PROPERTIES:
+- hAppServerHandle: Handle to the application server connection
+  - Type: HANDLE
+  - Access: Public (GET/SET)
+  - Purpose: Stores the server connection handle
+
+MAIN METHODS:
+
+1. CONSTRUCTOR ServerConnection():
+   - Initialize the server connection class
+   - Call parent constructor
+   - Set up any required initialization
+   - Prepare for server connection
+
+2. getConnect():
+   - PURPOSE: Establishes connection to the application server
+   - RETURN TYPE: LOGICAL
+   - LOGIC:
+     1. Create new server handle
+     2. Attempt to connect to server using connection string
+     3. Set connection parameters (session model, URL)
+     4. Return connection result (TRUE if successful, FALSE if failed)
+   - ERROR HANDLING:
+     - Try-catch block for connection errors
+     - Log connection failures
+     - Return FALSE on error
+
+3. getDisconnect():
+   - PURPOSE: Closes the connection to the application server
+   - RETURN TYPE: LOGICAL
+   - LOGIC:
+     1. Check if server handle is valid
+     2. Attempt to disconnect from server
+     3. Return disconnection result
+   - ERROR HANDLING:
+     - Try-catch block for disconnection errors
+     - Log disconnection failures
+     - Return FALSE on error
+
+4. DESTRUCTOR ServerConnection():
+   - PURPOSE: Clean up resources when object is destroyed
+   - LOGIC:
+     1. Check if server handle is valid
+     2. Delete server handle object
+     3. Clean up any remaining resources
+
+CONNECTION DETAILS:
+- Connection Type: Application Server
+- Session Model: Session-managed
+- URL: http://192.168.0.102:8810/apsv
+- Protocol: HTTP
+- Port: 8810
+
+ERROR HANDLING:
+- Try-catch blocks in all methods
+- Proper error logging
+- Graceful error recovery
+- Resource cleanup in finally blocks
+- Connection status validation
+
+INTEGRATION:
+- Used by all client-side procedures
+- Provides server connection for data operations
+- Supports JSON data exchange
+- Enables client-server communication
+- Manages connection lifecycle
+
+SPECIAL FEATURES:
+- Connection management
+- Error handling and logging
+- Resource cleanup
+- Connection status tracking
+- Reusable connection methods
