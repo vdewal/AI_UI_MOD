@@ -1,0 +1,360 @@
+GENERIC PSEUDO CODE FOR AddAccount.w
+=====================================
+(Technology-Agnostic Version for Translation to Other Platforms)
+
+PURPOSE:
+--------
+Dialog-based form for adding new customer accounts to a banking system.
+This pseudo code can be translated to any modern technology stack.
+
+MAIN COMPONENTS:
+----------------
+1. Input Parameters: Customer ID (integer)
+2. Data Structures: Account details object
+3. UI Components: Form fields and buttons
+4. External Services: Server communication layer
+
+GENERIC PSEUDO CODE:
+====================
+
+CLASS AddAccountDialog
+BEGIN
+    // Properties
+    PRIVATE customerId AS INTEGER
+    PRIVATE accountDetails AS AccountDetailsObject
+    PRIVATE serverConnection AS ServerConnection
+    PRIVATE utility AS ClientUtility
+    
+    // UI Components
+    PRIVATE cancelButton AS Button
+    PRIVATE createButton AS Button
+    PRIVATE accountTypeComboBox AS ComboBox
+    PRIVATE accountSubTypeComboBox AS ComboBox
+    PRIVATE loanDurationComboBox AS ComboBox
+    PRIVATE ifscCodeField AS TextField
+    PRIVATE rateOfInterestField AS NumberField
+    PRIVATE totalLoanAmountField AS NumberField
+    PRIVATE transferLimitField AS NumberField
+    
+    // Constructor
+    CONSTRUCTOR AddAccountDialog(INPUT customerId AS INTEGER)
+    BEGIN
+        SET this.customerId = customerId
+        INITIALIZE_UI_COMPONENTS()
+        SETUP_EVENT_HANDLERS()
+        HIDE_ALL_FIELDS()
+    END
+    
+    // Initialize UI Components
+    PROCEDURE INITIALIZE_UI_COMPONENTS()
+    BEGIN
+        // Create buttons
+        CREATE cancelButton WITH LABEL "Cancel"
+        CREATE createButton WITH LABEL "Create"
+        
+        // Create form fields
+        CREATE accountTypeComboBox WITH ITEMS ["Savings Account", "Loan Account", "Demat Account"]
+        CREATE accountSubTypeComboBox
+        CREATE loanDurationComboBox WITH ITEMS ["1", "2", "3", "4", "5", "6", "7", "8"]
+        CREATE ifscCodeField WITH LABEL "IFSC Code"
+        CREATE rateOfInterestField WITH LABEL "Rate of Interest(%)"
+        CREATE totalLoanAmountField WITH LABEL "Total Loan Amount"
+        CREATE transferLimitField WITH LABEL "Transfer Limit"
+        
+        // Initialize server components
+        CREATE serverConnection
+        CREATE utility
+    END
+    
+    // Setup Event Handlers
+    PROCEDURE SETUP_EVENT_HANDLERS()
+    BEGIN
+        // Button click events
+        ON createButton.CLICK DO HANDLE_CREATE_BUTTON_CLICK()
+        ON cancelButton.CLICK DO HANDLE_CANCEL_BUTTON_CLICK()
+        
+        // Field change events
+        ON accountTypeComboBox.VALUE_CHANGED DO HANDLE_ACCOUNT_TYPE_CHANGE()
+        ON accountSubTypeComboBox.VALUE_CHANGED DO RUN_VALIDATION()
+        ON loanDurationComboBox.VALUE_CHANGED DO RUN_VALIDATION()
+        ON ifscCodeField.VALUE_CHANGED DO RUN_VALIDATION()
+        ON rateOfInterestField.VALUE_CHANGED DO RUN_VALIDATION()
+        ON totalLoanAmountField.VALUE_CHANGED DO RUN_VALIDATION()
+        ON transferLimitField.VALUE_CHANGED DO RUN_VALIDATION()
+    END
+    
+    // Hide all fields initially
+    PROCEDURE HIDE_ALL_FIELDS()
+    BEGIN
+        SET ifscCodeField.VISIBLE = FALSE
+        SET rateOfInterestField.VISIBLE = FALSE
+        SET totalLoanAmountField.VISIBLE = FALSE
+        SET transferLimitField.VISIBLE = FALSE
+        SET loanDurationComboBox.VISIBLE = FALSE
+    END
+    
+    // Handle Account Type Change
+    PROCEDURE HANDLE_ACCOUNT_TYPE_CHANGE()
+    BEGIN
+        GET selectedAccountType = accountTypeComboBox.GET_SELECTED_VALUE()
+        
+        IF selectedAccountType = "Savings Account" THEN
+        BEGIN
+            SHOW_SAVINGS_ACCOUNT_FIELDS()
+        END
+        ELSE IF selectedAccountType = "Loan Account" THEN
+        BEGIN
+            SHOW_LOAN_ACCOUNT_FIELDS()
+        END
+        
+        // Load account sub types from server
+        LOAD_ACCOUNT_SUB_TYPES(selectedAccountType)
+        RUN_VALIDATION()
+    END
+    
+    // Show fields for Savings Account
+    PROCEDURE SHOW_SAVINGS_ACCOUNT_FIELDS()
+    BEGIN
+        SET ifscCodeField.VISIBLE = TRUE
+        SET transferLimitField.VISIBLE = TRUE
+        SET loanDurationComboBox.VISIBLE = FALSE
+        SET rateOfInterestField.VISIBLE = FALSE
+        SET totalLoanAmountField.VISIBLE = FALSE
+    END
+    
+    // Show fields for Loan Account
+    PROCEDURE SHOW_LOAN_ACCOUNT_FIELDS()
+    BEGIN
+        SET ifscCodeField.VISIBLE = TRUE
+        SET transferLimitField.VISIBLE = FALSE
+        SET loanDurationComboBox.VISIBLE = TRUE
+        SET rateOfInterestField.VISIBLE = TRUE
+        SET totalLoanAmountField.VISIBLE = TRUE
+    END
+    
+    // Load Account Sub Types from Server
+    PROCEDURE LOAD_ACCOUNT_SUB_TYPES(INPUT accountType AS STRING)
+    BEGIN
+        TRY
+            // Connect to server
+            serverConnection.CONNECT()
+            
+            // Prepare request
+            request = utility.CREATE_REQUEST("getAcctSubType", accountType, 0, NULL)
+            
+            // Call server
+            response = serverConnection.CALL_SERVER("TestBankController", request)
+            
+            // Update combo box
+            accountSubTypeComboBox.SET_ITEMS(response.GET_ACCOUNT_SUB_TYPES())
+            
+        CATCH error
+            SHOW_ERROR_MESSAGE("Failed to load account sub types: " + error.MESSAGE)
+        FINALLY
+            serverConnection.DISCONNECT()
+        END
+    END
+    
+    // Handle Create Button Click
+    PROCEDURE HANDLE_CREATE_BUTTON_CLICK()
+    BEGIN
+        IF NOT VALIDATE_FORM() THEN
+        BEGIN
+            SHOW_ERROR_MESSAGE("Please correct the validation errors")
+            RETURN
+        END
+        
+        // Create account details object
+        accountDetails = CREATE_ACCOUNT_DETAILS_OBJECT()
+        
+        // Save to server
+        SAVE_ACCOUNT_TO_SERVER(accountDetails)
+    END
+    
+    // Create Account Details Object
+    FUNCTION CREATE_ACCOUNT_DETAILS_OBJECT() RETURNS AccountDetailsObject
+    BEGIN
+        accountDetails = NEW AccountDetailsObject()
+        
+        SET accountDetails.accountType = accountTypeComboBox.GET_SELECTED_VALUE()
+        SET accountDetails.accountSubType = accountSubTypeComboBox.GET_SELECTED_VALUE()
+        SET accountDetails.ifscCode = ifscCodeField.GET_VALUE()
+        SET accountDetails.transferLimit = transferLimitField.GET_VALUE()
+        SET accountDetails.rateOfInterest = rateOfInterestField.GET_VALUE()
+        SET accountDetails.totalLoanAmount = totalLoanAmountField.GET_VALUE()
+        SET accountDetails.loanDuration = loanDurationComboBox.GET_SELECTED_VALUE()
+        
+        RETURN accountDetails
+    END
+    
+    // Save Account to Server
+    PROCEDURE SAVE_ACCOUNT_TO_SERVER(INPUT accountDetails AS AccountDetailsObject)
+    BEGIN
+        TRY
+            // Connect to server
+            serverConnection.CONNECT()
+            
+            // Prepare request
+            request = utility.CREATE_REQUEST("AddCustomerAccount", 
+                                           accountDetails.accountType, 
+                                           customerId, 
+                                           accountDetails)
+            
+            // Call server
+            response = serverConnection.CALL_SERVER("TestBankController", request)
+            
+            // Show result
+            SHOW_SUCCESS_MESSAGE(response.GET_MESSAGE())
+            
+            // Close dialog
+            CLOSE_DIALOG()
+            
+        CATCH error
+            SHOW_ERROR_MESSAGE("Failed to create account: " + error.MESSAGE)
+        FINALLY
+            serverConnection.DISCONNECT()
+        END
+    END
+    
+    // Validate Form
+    FUNCTION VALIDATE_FORM() RETURNS BOOLEAN
+    BEGIN
+        accountType = accountTypeComboBox.GET_SELECTED_VALUE()
+        accountSubType = accountSubTypeComboBox.GET_SELECTED_VALUE()
+        ifscCode = ifscCodeField.GET_VALUE()
+        
+        // Check required fields
+        IF accountType IS NULL OR accountSubType IS NULL OR ifscCode IS EMPTY THEN
+            RETURN FALSE
+        
+        // Validate based on account type
+        IF accountType = "Savings Account" THEN
+        BEGIN
+            transferLimit = transferLimitField.GET_VALUE()
+            RETURN transferLimit > 0
+        END
+        ELSE IF accountType = "Loan Account" THEN
+        BEGIN
+            rateOfInterest = rateOfInterestField.GET_VALUE()
+            totalLoanAmount = totalLoanAmountField.GET_VALUE()
+            loanDuration = loanDurationComboBox.GET_SELECTED_VALUE()
+            
+            RETURN rateOfInterest > 0 AND totalLoanAmount > 0 AND loanDuration IS NOT NULL
+        END
+        
+        RETURN TRUE
+    END
+    
+    // Run Validation
+    PROCEDURE RUN_VALIDATION()
+    BEGIN
+        IF VALIDATE_FORM() THEN
+            SET createButton.ENABLED = TRUE
+        ELSE
+            SET createButton.ENABLED = FALSE
+    END
+    
+    // Handle Cancel Button Click
+    PROCEDURE HANDLE_CANCEL_BUTTON_CLICK()
+    BEGIN
+        CLOSE_DIALOG()
+    END
+    
+    // Show Error Message
+    PROCEDURE SHOW_ERROR_MESSAGE(INPUT message AS STRING)
+    BEGIN
+        // Implementation depends on technology
+        // Examples:
+        // - Java: JOptionPane.showMessageDialog()
+        // - C#: MessageBox.Show()
+        // - Web: alert() or toast notification
+        // - Mobile: native alert dialog
+        DISPLAY_ERROR_DIALOG(message)
+    END
+    
+    // Show Success Message
+    PROCEDURE SHOW_SUCCESS_MESSAGE(INPUT message AS STRING)
+    BEGIN
+        // Implementation depends on technology
+        DISPLAY_SUCCESS_DIALOG(message)
+    END
+    
+    // Close Dialog
+    PROCEDURE CLOSE_DIALOG()
+    BEGIN
+        // Implementation depends on technology
+        // Examples:
+        // - Java: dispose() or setVisible(false)
+        // - C#: Close() or Hide()
+        // - Web: close modal or redirect
+        // - Mobile: pop navigation stack
+        HIDE_OR_CLOSE_THIS_DIALOG()
+    END
+END
+
+// Data Structure for Account Details
+CLASS AccountDetailsObject
+BEGIN
+    PUBLIC accountType AS STRING
+    PUBLIC accountSubType AS STRING
+    PUBLIC ifscCode AS STRING
+    PUBLIC rateOfInterest AS DECIMAL
+    PUBLIC loanDuration AS INTEGER
+    PUBLIC totalLoanAmount AS INTEGER
+    PUBLIC transferLimit AS INTEGER
+END
+
+// Server Connection Interface
+INTERFACE ServerConnection
+BEGIN
+    METHOD CONNECT() RETURNS BOOLEAN
+    METHOD DISCONNECT() RETURNS BOOLEAN
+    METHOD CALL_SERVER(INPUT serviceName AS STRING, INPUT request AS Object) RETURNS Object
+END
+
+// Client Utility Interface
+INTERFACE ClientUtility
+BEGIN
+    METHOD CREATE_REQUEST(INPUT methodName AS STRING, 
+                         INPUT parameter1 AS STRING, 
+                         INPUT parameter2 AS INTEGER, 
+                         INPUT data AS Object) RETURNS Object
+END
+
+// Translation Notes for Different Technologies:
+// ===========================================
+// 
+// JAVA (Swing/JavaFX):
+// - Use JDialog or Stage for dialog
+// - JComboBox for combo boxes
+// - JTextField for text fields
+// - JButton for buttons
+// - Event listeners for value changes
+// 
+// C# (WinForms/WPF):
+// - Use Form or Window for dialog
+// - ComboBox for combo boxes
+// - TextBox for text fields
+// - Button for buttons
+// - Event handlers for value changes
+// 
+// WEB (HTML/JavaScript):
+// - Use modal dialog or popup
+// - <select> for combo boxes
+// - <input> for text fields
+// - <button> for buttons
+// - addEventListener for value changes
+// 
+// MOBILE (Android/iOS):
+// - Use Activity/Fragment or ViewController
+// - Spinner/PickerView for combo boxes
+// - EditText/UITextField for text fields
+// - Button for buttons
+// - OnClickListener/Delegate for value changes
+// 
+// PYTHON (Tkinter/PyQt):
+// - Use Toplevel or QDialog for dialog
+// - Combobox for combo boxes
+// - Entry for text fields
+// - Button for buttons
+// - Command/bind for value changes
